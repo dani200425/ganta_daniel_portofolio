@@ -15,7 +15,6 @@
 - Git & Version Control
 - HTML/CSS
 
-## 🎯 About Me
 I enjoy working on technology-driven projects, learning new tools, and exploring AI and software development. I’m currently looking for opportunities in IT, data, research, or AI-oriented roles.
 
 📫 Contact: gantadani81@gmail.com
