@@ -1,0 +1,3 @@
+C:/Users/user/CLionProjects/ATM-inteles cu noduri inainte de modificari finale/ATM-inteles cu noduri/ATM-inteles/cmake-build-debug/CMakeFiles/ATM_inteles.dir
+C:/Users/user/CLionProjects/ATM-inteles cu noduri inainte de modificari finale/ATM-inteles cu noduri/ATM-inteles/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/user/CLionProjects/ATM-inteles cu noduri inainte de modificari finale/ATM-inteles cu noduri/ATM-inteles/cmake-build-debug/CMakeFiles/rebuild_cache.dir
