@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ro">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="style.css">
+    <title>🌿 Lista mea de sarcini</title>
+    <style>
+        :root{
+            --bg:#f5fff6;
+            --card:#f7fff9;
+            --peach:#dfffe8;        /* soft mint (kept var names for minimal changes) */
+            --soft-peach:#effff4;
+            --pink:#c9f7d6;
+            --muted:#607a65;
+            --accent:#34c759;       /* primary green */
+            --success:#1fa66b;      /* success green */
+            --danger:#ff6b6b;       /* keep red for delete */
+            --shadow: 0 6px 18px rgba(52,199,89,0.08);
+            --radius:14px;
+            --gap:14px;
+            font-family: "Poppins", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial;
+        }
+
+        html,body{
+            height:100%;
+            margin:0;
+            background: linear-gradient(180deg, #f7fff9 0%, #eefef4 100%);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            color:#20342e;
+        }
+
+        .wrap{
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:28px;
+        }
+
+        .card{
+            width:100%;
+            max-width:520px;
+            background: linear-gradient(180deg, rgba(245,255,250,0.7), rgba(243,255,248,0.95));
+            border-radius:var(--radius);
+            padding:28px;
+            box-shadow: var(--shadow);
+            border:1px solid rgba(60,180,120,0.12);
+            backdrop-filter: blur(6px);
+        }
+
+        .title{
+            display:flex;
+            gap:12px;
+            align-items:center;
+            margin:0 0 18px 0;
+            font-size:20px;
+            font-weight:600;
+        }
+
+        .title-emoji{
+            font-size:28px;
+            line-height:1;
+        }
+
+        .subtitle{
+            margin:0;
+            font-size:13px;
+            color:var(--muted);
+            font-weight:500;
+        }
+
+        .input-row{
+            display:flex;
+            gap:10px;
+            margin-top:18px;
+            align-items:center;
+        }
+
+        .task-input{
+            flex:1;
+            display:flex;
+            align-items:center;
+            background: linear-gradient(180deg,var(--soft-peach), #fff);
+            border-radius:12px;
+            padding:10px 12px;
+            border:1px solid rgba(80,170,110,0.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        .task-input input{
+            border:0;
+            outline:none;
+            background:transparent;
+            font-size:15px;
+            padding:8px;
+            flex:1;
+            color:#20342e;
+        }
+
+        .add-btn{
+            width:46px;
+            height:46px;
+            border-radius:50%;
+            border:0;
+            background:linear-gradient(180deg,var(--accent), #2fa25d);
+            color:white;
+            font-size:22px;
+            display:inline-grid;
+            place-items:center;
+            box-shadow: 0 6px 14px rgba(46,160,96,0.16);
+            cursor:pointer;
+            transition:transform .12s ease, box-shadow .12s ease;
+        }
+        .add-btn:active{ transform:scale(.96); }
+        .add-btn[disabled]{ opacity:.6; cursor:not-allowed; transform:none; }
+
+        ul.tasks{
+            list-style:none;
+            margin:18px 0 0 0;
+            padding:0;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        li.task{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            background: linear-gradient(180deg, #ffffff, #f7fff9);
+            border-radius:12px;
+            padding:10px 12px;
+            border:1px solid rgba(220,245,230,0.6);
+            box-shadow: 0 6px 12px rgba(40,150,90,0.04);
+            transform-origin:left center;
+            opacity:1;
+            transition:background .18s ease, transform .12s ease;
+        }
+
+        .task .left{
+            display:flex;
+            gap:12px;
+            align-items:center;
+            flex:1;
+            min-width:0;
+        }
+
+        .btn-circle{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            border:0;
+            display:inline-grid;
+            place-items:center;
+            cursor:pointer;
+            font-size:16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            transition:transform .12s ease, opacity .12s ease;
+            background:linear-gradient(180deg,#fff,#fff);
+        }
+
+        .btn-check{
+            color:var(--accent);
+            border:1px solid rgba(80,180,120,0.08);
+            background: linear-gradient(180deg, #fff, #f7fff8);
+        }
+        .btn-check.done{
+            background: linear-gradient(180deg,#e6f9ee,#dff4e8);
+            color:var(--success);
+            border:1px solid rgba(40,160,110,0.12);
+        }
+
+        .btn-delete{
+            color:var(--danger);
+            border:1px solid rgba(255,110,110,0.08);
+            background: linear-gradient(180deg,#fff,#fff8f8);
+        }
+
+        .task-text{
+            font-size:15px;
+            color:#20342e;
+            flex:1;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .task.done .task-text{
+            text-decoration:line-through;
+            color:#9b9b9b;
+            font-style:italic;
+        }
+
+        /* fade-in for new tasks */
+        .fade-in{
+            animation:fadeInUp .28s cubic-bezier(.2,.9,.2,1);
+        }
+        @keyframes fadeInUp{
+            from{opacity:0; transform:translateY(10px) scale(.995);}
+            to{opacity:1; transform:translateY(0) scale(1);}
+        }
+
+        /* Small screens */
+        @media (max-width:420px){
+            .card{ padding:18px; border-radius:12px;}
+            .title{ font-size:18px; }
+            .add-btn{ width:44px; height:44px; font-size:20px; }
+            .btn-circle{ width:36px; height:36px; font-size:15px;}
+        }
+
+        /* subtle hover */
+        .task:hover{ transform:translateY(-3px); }
+        .btn-circle:hover{ transform:scale(1.04); }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="card" role="application" aria-label="Lista mea de sarcini">
+            <h1 class="title"><span class="title-emoji">🌿</span> <span>Lista mea de sarcini</span></h1>
+            <p class="subtitle">Simplu. Verde. Salvat local – gata la refresh.</p>
+
+            <div class="input-row" style="margin-top:12px;">
+                <div class="task-input" aria-hidden="false"></div>
+                    <input id="newTaskInput" type="text" placeholder="Adaugă o sarcină..." aria-label="Nouă sarcină" autocomplete="off" />
+                </div>
+                <button id="addBtn" class="add-btn" aria-label="Adaugă sarcină">+</button>
+            </div>
+
+            <ul id="tasksList" class="tasks" aria-live="polite" aria-label="Lista de sarcini"></ul>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            const STORAGE_KEY = 'todo.tasks.v1';
+            const input = document.getElementById('newTaskInput');
+            const addBtn = document.getElementById('addBtn');
+            const listEl = document.getElementById('tasksList');
+
+            let tasks = [];
+
+            // utils
+            function save(){
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+            }
+
+            function load(){
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    tasks = raw ? JSON.parse(raw) : [];
+                } catch(e){
+                    tasks = [];
+                }
+            }
+
+            function createTaskElement(task, animate=false){
+                const li = document.createElement('li');
+                li.className = 'task' + (task.done ? ' done' : '');
+                li.dataset.id = task.id;
+
+                const left = document.createElement('div');
+                left.className = 'left';
+
+                const checkBtn = document.createElement('button');
+                checkBtn.className = 'btn-circle btn-check' + (task.done ? ' done' : '');
+                checkBtn.title = task.done ? 'Debifează' : 'Marchează ca realizat';
+                checkBtn.setAttribute('aria-label', task.done ? 'Debifează sarcină' : 'Marchează ca realizat');
+                checkBtn.innerText = '✔';
+
+                const text = document.createElement('div');
+                text.className = 'task-text';
+                text.textContent = task.text;
+                text.title = task.text;
+
+                left.appendChild(checkBtn);
+                left.appendChild(text);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-circle btn-delete';
+                delBtn.title = 'Șterge';
+                delBtn.setAttribute('aria-label', 'Șterge sarcină');
+                delBtn.innerText = '✖';
+
+                li.appendChild(left);
+                li.appendChild(delBtn);
+
+                if(animate){
+                    li.classList.add('fade-in');
+                    // ensure class removed after animation to avoid replays
+                    li.addEventListener('animationend', ()=> li.classList.remove('fade-in'), {once:true});
+                }
+
+                return li;
+            }
+
+            function render(all=false){
+                // render tasks; when all=true, re-render full list; else append last
+                if(all){
+                    listEl.innerHTML = '';
+                    tasks.forEach(t => listEl.appendChild(createTaskElement(t, false)));
+                } else {
+                    const last = tasks[tasks.length-1];
+                    if(last){
+                        listEl.appendChild(createTaskElement(last, true));
+                        // scroll into view on mobile
+                        lastScrollIntoView();
+                    }
+                }
+            }
+
+            function lastScrollIntoView(){
+                if(window.innerWidth <= 420){
+                    // small delay for animation
+                    setTimeout(()=> {
+                        const last = listEl.lastElementChild;
+                        if(last) last.scrollIntoView({behavior:'smooth', block:'end'});
+                    }, 80);
+                }
+            }
+
+            // events
+            addBtn.addEventListener('click', addTask);
+            input.addEventListener('keydown', function(e){
+                if(e.key === 'Enter') addTask();
+            });
+
+            listEl.addEventListener('click', function(e){
+                const btn = e.target.closest('button');
+                if(!btn) return;
+                const li = e.target.closest('li.task');
+                if(!li) return;
+                const id = li.dataset.id;
+                const idx = tasks.findIndex(t => String(t.id) === String(id));
+                if(idx === -1) return;
+
+                if(btn.classList.contains('btn-delete')){
+                    // animate removal
+                    li.style.transition = 'opacity .18s ease, transform .18s ease, height .18s ease';
+                    li.style.opacity = '0';
+                    li.style.transform = 'translateX(8px) scale(.995)';
+                    setTimeout(()=> {
+                        tasks.splice(idx,1);
+                        save();
+                        li.remove();
+                    }, 180);
+                } else if(btn.classList.contains('btn-check')){
+                    tasks[idx].done = !tasks[idx].done;
+                    save();
+                    // update UI
+                    const newLi = createTaskElement(tasks[idx], false);
+                    li.replaceWith(newLi);
+                }
+            });
+
+            function addTask(){
+                const val = input.value.trim();
+                if(!val) {
+                    input.value = '';
+                    input.focus();
+                    return;
+                }
+                const task = { id: Date.now() + Math.random().toString(36).slice(2,6), text: val, done:false, createdAt: Date.now() };
+                tasks.push(task);
+                save();
+                render(false);
+                input.value = '';
+                input.focus();
+            }
+
+            // initial load
+            document.addEventListener('DOMContentLoaded', ()=>{
+                load();
+                render(true);
+            });
+
+            // expose for debugging (optional)
+            window._todo = { get: ()=>tasks, save: save };
+        })();
+    </script>
+</body>
+</html>
